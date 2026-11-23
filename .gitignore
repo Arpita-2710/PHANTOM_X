@@ -1,0 +1,23 @@
+
+# Dataset folders
+data/
+raw_sample/
+
+# Model checkpoints
+outputs/
+*.pth
+*.pt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment files
+.env
+
+# VS Code settings
+.vscode/
