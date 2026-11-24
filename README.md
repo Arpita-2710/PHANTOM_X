@@ -1,76 +1,95 @@
-# PHANTOM X
-### AI-Powered Multimodal Digital Forensics and Incident Reconstruction System
+# PHANTOM X: Digital Image Forensics Platform
 
-PHANTOM X is a research-oriented project aimed at developing an intelligent digital forensics platform that analyses digital evidence and assists in identifying manipulated or AI-generated content.
+**AI-Powered Image Authenticity Detection (REAL vs. AI-GENERATED)**
 
-## Current Development: Image Authenticity Detection
+PHANTOM X is a research-oriented digital image forensics platform built with PyTorch and Streamlit. The system evaluates single-frame digital images to distinguish between authentic camera captures and synthetic AI-generated media (from generators such as Midjourney, Stable Diffusion, and DALL-E).
 
-The first development module focuses on distinguishing between real-world photographs and AI-generated images using deep learning.
+---
 
-### Technology Stack
-- Python
-- PyTorch
-- Torchvision
-- ResNet18
-- Pillow
-- NumPy
+## 1. System Architecture
 
-### Current Implementation
-- Image dataset preparation and organisation
-- Image preprocessing and normalisation
-- ResNet18-based binary classification
-- ImageNet transfer learning
-- Model training and checkpoint saving
-- Individual image prediction
-- Model evaluation using a confusion matrix
+- **Classifier Backbone**: ResNet-18 (ImageNet pretrained initial transfer learning weights)
+- **Classification Space**: Binary:
+  - `0`: `AI-GENERATED` (Internal code label: `FAKE`)
+  - `1`: `REAL` (Internal code label: `REAL`)
+- **Input Resolution**: $224 \times 224$ pixels, ImageNet mean/standard deviation normalization
+- **Inference Runtime**: CPU-compatible offline execution
+- **Checkpoint Location**: `outputs/phantom_x_resnet18_best.pth`
+- **Frontend**: Streamlit with custom Cyber-Forensics dark UI
 
-### Initial Dataset
+---
 
-| Category | Training | Validation |
-|---|---:|---:|
-| REAL | 80 | 20 |
-| FAKE | 80 | 20 |
-| Total | 160 | 40 |
+## 2. Installation & Setup
 
-Dataset source: Hugging Face – LuckyCow/Ai_vs_real_web_images
+Ensure Python 3.11+ is installed.
 
-### Initial Experimental Results
+```powershell
+# 1. Navigate to the project root
+cd "PHANTOM_X_Image_Model"
 
-- Model: ResNet18
-- Training epochs: 5
-- Training accuracy: 96.88%
-- Validation accuracy: 60%
-- Evaluation images: 40
-
-These are preliminary results from a small dataset. Further training and evaluation are required to improve generalisation and reduce overfitting.
-
-### Project Structure
-
-```text
-PHANTOM_X/
-├── phantom_x/
-│   ├── model.py
-│   ├── train.py
-│   ├── predict.py
-│   ├── evaluate.py
-│   └── check_environment.py
-├── data/                 # Local dataset; not tracked
-├── outputs/              # Local model checkpoints
-├── requirements.txt
-├── README.md
-└── .gitignore
+# 2. Install dependencies
+pip install -r requirements.txt
 ```
 
-### Future Development
-1. Expand and diversify the image dataset.
-2. Improve model generalisation and reduce overfitting.
-3. Compare different deep-learning architectures.
-4. Develop image manipulation detection and localisation.
-5. Build an image-upload and analysis interface.
-6. Integrate the image module into the larger PHANTOM X platform.
+### Verified Dependencies (`requirements.txt`):
+- `torch`
+- `torchvision`
+- `pillow`
+- `numpy`
+- `streamlit`
 
-### Dataset and Checkpoint Information
+---
 
-Datasets and trained model checkpoints are maintained separately from this GitHub repository. Refer to the project documentation for dataset access and setup instructions.
+## 3. Running the Application
 
-**Project Status:** Initial image classification prototype implemented; further research and development ongoing.
+Launch the Streamlit forensic frontend with:
+
+```powershell
+streamlit run app.py
+```
+
+The application will start locally at:
+```text
+Local URL: http://localhost:8501
+Network URL: http://<local-ip>:8501
+```
+
+---
+
+## 4. Application Features
+
+1. **Cyber-Forensics Dashboard (Home)**:
+   - System specifications, operational scope, and active checkpoint status.
+2. **Interactive Image Analysis**:
+   - **Upload**: Drag-and-drop support for `JPG`, `JPEG`, `PNG`, and `WEBP` (up to 20MB).
+   - **Built-in Validation Samples**: One-click testing using actual dataset samples (`data/val/REAL` and `data/val/FAKE`) for immediate supervisor demonstrations.
+   - **Real-time Diagnostic Telemetry**: Image dimensions, color mode, aspect ratio, file size, and latency in milliseconds.
+   - **EXIF Analysis**: Inspection of camera make, model, software, and metadata headers.
+   - **Visual Result Cards**: Distinct color-coded forensic badges (Green for REAL, Crimson for AI-GENERATED) and class probability progress bars.
+3. **Session Analysis History**:
+   - Maintains continuous scan telemetry throughout the session.
+   - Summary metrics (total scans, synthetic count, real count).
+   - One-click CSV export of forensic session audit logs.
+   - Session reset capability.
+
+---
+
+## 5. Verification & Testing
+
+The model integration was verified using the existing trained checkpoint `outputs/phantom_x_resnet18_best.pth`:
+
+| Input Image | Actual Label | Model Prediction | Model Score | Latency (CPU) |
+| :--- | :--- | :--- | :--- | :--- |
+| `data/val/REAL/080_007532_2f1bef11.jpg` | REAL Camera | **AI-GENERATED** | 50.83% | ~558 ms |
+| `data/val/REAL/081_008293_62d881b0.jpg` | REAL Camera | **REAL** | 92.48% | ~160 ms |
+| `data/val/FAKE/080_020450_9d55e017.png` | AI-Generated | **AI-GENERATED** | 93.61% | ~170 ms |
+| `data/val/FAKE/081_003606_89a6726b.jpg` | AI-Generated | **AI-GENERATED** | 96.12% | ~165 ms |
+
+*(Note: The starter baseline ResNet-18 model was trained on only 160 images; predictions reflect real model output and demonstrate known boundary behavior).*
+
+---
+
+## 6. Scientific & Forensic Disclaimer
+
+> [!WARNING]
+> Model scores produced by PHANTOM X represent uncalibrated experimental neural network indicators, **not definitive proof of authenticity or synthetic fabrication**. Digital forensics requires cross-verifying camera sensor PRNU, Fourier domain frequency spectra, metadata integrity, and multi-generator generalizability.

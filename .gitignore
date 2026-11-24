@@ -1,23 +1,78 @@
+# ==============================================================================
+# PHANTOM X - Git Ignore Configuration
+# Protects confidential model weights, raw datasets, credentials, and local caches
+# ==============================================================================
 
-# Dataset folders
-data/
-raw_sample/
-
-# Model checkpoints
+# 1. Model Weights & Checkpoints (Confidential & Large Binaries)
 outputs/
 *.pth
 *.pt
+*.bin
+*.safetensors
+*.ckpt
+*.onnx
+*.h5
+*.pkl
+*.joblib
+PHANTOM_X_Model.zip
 
-# Python cache
+# 2. Datasets & Raw Media (Large Files & Confidential Forensic Samples)
+data/
+data_raw/
+raw_sample/
+raw_sample_full/
+PHANTOM_X_200_Dataset.zip
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# 3. Security, Secrets & Access Tokens
+.env
+.env.*
+*.env
+*.key
+*.pem
+*.token
+*credential*
+*secret*
+.streamlit/secrets.toml
+secrets.toml
+
+# 4. Scratch Files, Temporary Artifacts & Local Logs
+scratch_*
+scratch/
+external_sample_test.jpg
+*.log
+logs/
+*.tmp
+*.bak
+*.swp
+
+# 5. Python Environment & Bytecode Cache
 __pycache__/
-*.pyc
-
-# Virtual environments
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
 .venv/
 venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
 
-# Environment files
-.env
-
-# VS Code settings
+# 6. Streamlit & IDE Configuration
+.streamlit/config.toml.local
 .vscode/
+.idea/
+
+# 7. Operating System Metadata
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
